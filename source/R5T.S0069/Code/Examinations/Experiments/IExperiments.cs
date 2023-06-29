@@ -28,7 +28,7 @@ namespace R5T.S0069
             // Standard settings are asynchronous.
             var settings = Instances.XmlWriterSettingSets.Standard;
 
-            var xmlText = Instances.XmlOperator.WriteTo_Text_Synchronous(
+            var xmlText = Instances.XmlOperator.WriteTo_Text(
                 element,
                 settings);
 
@@ -37,7 +37,7 @@ namespace R5T.S0069
             settings = Instances.XmlWriterSettingSets.Standard_Synchronous;
 
             // Will error: System.InvalidOperationException: 'Set XmlWriterSettings.Async to true if you want to use Async Methods.'
-            xmlText = await Instances.XmlOperator.WriteTo_Text(
+            xmlText = await Instances.XmlOperator.WriteTo_Text_Asynchronous(
                 element,
                 settings);
 

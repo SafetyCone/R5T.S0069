@@ -27,7 +27,7 @@ namespace R5T.S0069
             /// Run.
             element.OrderChildren_ByNames(orderedNames);
 
-            var text = Instances.XElementOperator.WriteTo_Text_Synchronous(element);
+            var text = Instances.XElementOperator.To_Text(element);
 
             Console.WriteLine(text);
         }
@@ -53,7 +53,7 @@ namespace R5T.S0069
                 )
             );
 
-            var text = Instances.XElementOperator.WriteTo_Text_Synchronous(element);
+            var text = Instances.XElementOperator.To_Text(element);
 
             Console.WriteLine(text);
         }
@@ -63,7 +63,7 @@ namespace R5T.S0069
             /// Inputs.
             var element = Instances.XElements_Constructed.Simple;
 
-            var text = Instances.XElementOperator.WriteTo_Text_Synchronous(element);
+            var text = Instances.XElementOperator.To_Text(element);
 
             Console.WriteLine(text);
         }
@@ -82,7 +82,7 @@ namespace R5T.S0069
             /// Run.
             var xElement = XElement.Parse(text.Value, LoadOptions.PreserveWhitespace);
 
-            var output = Instances.XElementOperator.WriteTo_Text_Synchronous(xElement);
+            var output = Instances.XElementOperator.To_Text(xElement);
 
             Console.WriteLine(output);
         }
