@@ -1,9 +1,12 @@
 using System;
+using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
-
+using System.Xml.Serialization;
+using System.Xml.XPath;
+using R5T.F0000;
 using R5T.L0030.Extensions;
 using R5T.T0141;
 
@@ -13,6 +16,69 @@ namespace R5T.S0069
     [ExperimentsMarker]
     public partial interface IExperiments : IExperimentsMarker
     {
+        public void PrettyPrintXml()
+        {
+            var xmlText = Instances.XmlTexts.SummaryWithPara;
+
+            Console.WriteLine(xmlText);
+
+            //var xmlSerializer = Xmlwrli
+
+            //var element = Instances.XElementOperator.Parse(xmlText);
+
+            var element = XElement.Parse(
+                xmlText.Value,
+                //LoadOptions.None
+                LoadOptions.PreserveWhitespace
+                );
+
+            Console.WriteLine(element);
+
+            //var prettyXmlText = Instances.XElementOperator.To_Text(element);
+
+            var stringBuilder = new StringBuilder();
+            //var stringWriter = new StringWriter(stringBuilder);
+
+            //element.Save(
+            //    stringWriter,
+            //    SaveOptions.None);
+
+            //var prettyXmlText = stringBuilder.ToString();
+
+            var xmlWriterSettings = new XmlWriterSettings
+            {
+                Indent = true,
+                OmitXmlDeclaration = true,
+                // Cannot set.
+                //OutputMethod = XmlOutputMethod.Text,
+            };
+
+            using (var xmlWriter = XmlWriter.Create(
+                stringBuilder,
+                xmlWriterSettings))
+            {
+                element.WriteTo(xmlWriter);
+            }
+
+            var prettyXmlText = stringBuilder.ToString();
+
+            Console.WriteLine(prettyXmlText);
+        }
+
+        /// <summary>
+        /// <inheritdoc cref="CanAsynchronousSettingsBeUsedSynchronously" path="/summary"/>
+        /// </summary>
+        public void UseXPath()
+        {
+            var element = Instances.XElements.MemberWithSummaryWithPara;
+            var xPath = Instances.XPaths.ParaInSummary;
+
+
+            var paraElement = element.XPathSelectElement(xPath.Value);
+
+            Console.WriteLine(paraElement);
+        }
+
         /// <summary>
         /// The XML writer settings type as an "Async" property that can be either true or false.
         /// I wonder, can a settings instance set to be asynchronous be used synchronously (or vice-versa)?
@@ -151,6 +217,23 @@ namespace R5T.S0069
             var output = stringBuilder.ToString();
 
             Console.WriteLine($"{text}: input,\n{output}: output");
+        }
+
+        /// <summary>
+        /// What happens if you try to parse an XElement from text containing two top-level nodes?
+        /// Result: System.Xml.XmlException: 'There are multiple root elements. Line 5, position 2.'
+        /// </summary>
+        public void XElementOfTwoNodes()
+        {
+            /// Inputs.
+            var xmlText = Instances.XmlTexts.SummaryAndRemarks;
+
+
+            /// Run.
+            // System.Xml.XmlException: 'There are multiple root elements. Line 5, position 2.'
+            var elements = XElement.Parse(xmlText.Value);
+
+            Console.WriteLine(elements);
         }
     }
 }

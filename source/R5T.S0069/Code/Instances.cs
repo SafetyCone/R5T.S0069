@@ -14,5 +14,6 @@ namespace R5T.S0069
         public static L0030.IXmlWriterSettingSets XmlWriterSettingSets => L0030.XmlWriterSettingSets.Instance;
         public static L0030.IXmlWriterSettingsOperator XmlWriterSettingsOperator => L0030.XmlWriterSettingsOperator.Instance;
         public static L0030.IXNameOperator XNameOperator => L0030.XNameOperator.Instance;
+        public static Z0049.Z001.IXPaths XPaths => Z0049.Z001.XPaths.Instance;
     }
 }

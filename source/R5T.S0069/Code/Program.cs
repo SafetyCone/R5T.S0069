@@ -13,11 +13,13 @@ namespace R5T.S0069
             //Experiments.Instance.XmlWriterSettings_ToString();
             //Experiments.Instance.XmlWriterSettings_DescribeTo();
             //await Experiments.Instance.CanAsynchronousSettingsBeUsedSynchronously();
+            //Experiments.Instance.UseXPath();
+            Experiments.Instance.PrettyPrintXml();
 
             //XmlScripts.Instance.Text_ToXElement_ToText();
             //XmlScripts.Instance.Element_ToText();
             //XmlScripts.Instance.Construct_ComplexElement();
-            XmlScripts.Instance.OrderChildrenBySpecifiedNames();
+            //XmlScripts.Instance.OrderChildrenBySpecifiedNames();
         }
     }
 }
