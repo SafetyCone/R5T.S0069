@@ -1,11 +1,13 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 using System.Xml.XPath;
+using Microsoft.Win32.SafeHandles;
 using R5T.F0000;
 using R5T.L0030.Extensions;
 using R5T.T0141;
@@ -92,7 +94,7 @@ namespace R5T.S0069
             var element = Instances.XElements.Simple;
 
             // Standard settings are asynchronous.
-            var settings = Instances.XmlWriterSettingSets.Standard;
+            var settings = Instances.XmlWriterSettingsSets.Standard;
 
             var xmlText = Instances.XmlOperator.WriteTo_Text(
                 element,
@@ -100,7 +102,7 @@ namespace R5T.S0069
 
             Console.WriteLine(xmlText);
 
-            settings = Instances.XmlWriterSettingSets.Standard_Synchronous;
+            settings = Instances.XmlWriterSettingsSets.Standard_Synchronous;
 
             // Will error: System.InvalidOperationException: 'Set XmlWriterSettings.Async to true if you want to use Async Methods.'
             xmlText = await Instances.XmlOperator.WriteTo_Text_Asynchronous(
@@ -119,7 +121,7 @@ namespace R5T.S0069
         {
             var settings =
                 //Instances.XmlWriterSettingSets.Default
-                Instances.XmlWriterSettingSets.Standard
+                Instances.XmlWriterSettingsSets.Standard
                 ;
 
             Instances.XmlWriterSettingsOperator.DescibeTo_Synchronous(
@@ -133,7 +135,7 @@ namespace R5T.S0069
         /// </summary>
         public void XmlWriterSettings_ToString()
         {
-            var settings = Instances.XmlWriterSettingSets.Default;
+            var settings = Instances.XmlWriterSettingsSets.Default;
 
             var output = settings.ToString();
 
@@ -234,6 +236,149 @@ namespace R5T.S0069
             var elements = XElement.Parse(xmlText.Value);
 
             Console.WriteLine(elements);
+        }
+
+        /// <summary>
+        /// Given misformatted XML text, parse the text to an XElement, then format the XElement and get a string representation.
+        /// </summary>
+        public void FormatMisformattedXmlText()
+        {
+            // Inputs.
+            var misformattedXmlText = Instances.XmlTexts.MemberWithSummaryAndRemarks_Misformatted2;
+            var outputFilePath = Instances.FilePaths.OutputTextFilePath;
+
+
+            /// Run.
+            var element = Instances.XElementOperator.Parse(
+                misformattedXmlText,
+                // Ensure we preserve all the misformatted whitespace.
+                LoadOptions.PreserveWhitespace);
+
+            //var originalElement = Instances.XElementOperator.Clone(element);
+
+            var lines = Instances.EnumerableOperator.From(Instances.XElementOperator.To_Text_NoModifications(element));
+
+            // Remove all whitespace-only child text nodes of the element.
+            var whitespaceOnlyChildTextNodes = Instances.XElementOperator.Enumerate_ChildNodesOfType<XText>(element)
+                .Where(Instances.XTextOperator.Is_WhitespaceOnly)
+                .Now();
+
+            foreach (var textNode in whitespaceOnlyChildTextNodes)
+            {
+                textNode.Remove();
+            }
+
+            lines = lines.Append("", Instances.XElementOperator.To_Text_NoModifications(element));
+
+            // Assume XML documentation comment is composed of multiple top-level elements, with no indentation.
+            var childElements = Instances.XElementOperator.Get_ChildElements(element);
+            foreach (var childElement in childElements)
+            {
+                childElement.AddBeforeSelf(new XText(Environment.NewLine));
+            }
+
+            lines = lines.Append("", Instances.XElementOperator.To_Text_NoModifications(element));
+
+            // Every newline in every text node becomes a newline+tab.
+            var textNodes = Instances.XElementOperator.Get_DescendantNodesOfType<XText>(element);
+
+            foreach (var textNode in textNodes)
+            {
+                var textNodeValue = textNode.Value;
+
+                var newTextNodeValue = Instances.StringOperator.Replace(
+                    textNodeValue,
+                    Instances.Strings.NewLine_NonWindows + Instances.Strings.Tab,
+                    Instances.Strings.NewLine_NonWindows);
+
+                textNode.Value = newTextNodeValue;
+            }
+
+            lines = lines.Append("", Instances.XElementOperator.To_Text_NoModifications(element));
+
+            // Put the member elment end tag on its own line.
+            Instances.XElementOperator.Add_BeforeElementEndTag(
+                element,
+                new XText(Environment.NewLine));
+
+            lines = lines.Append("", Instances.XElementOperator.To_Text_NoModifications(element));
+
+            //// Remove all text nodes.
+            //var textNodes = Instances.XElementOperator.Get_DescendantNodesOfType<XText>(element);
+
+            //foreach (var textNode in textNodes)
+            //{
+            //    textNode.Remove();
+            //}
+
+            //lines = lines.Append("", Instances.XElementOperator.To_Text_NoModifications(element));
+
+            //// Add new lines before each child element.
+            //var childElements = Instances.XElementOperator.Get_ChildElements(element);
+
+            //foreach (var childElement in childElements)
+            //{
+            //    childElement.AddBeforeSelf(new XText(Environment.NewLine));
+            //}
+
+            //lines = lines.Append("", Instances.XElementOperator.To_Text_NoModifications(element));
+
+            //// Add a new line before the elements end tag.
+            //Instances.XElementOperator.Add_BeforeElementEndTag(
+            //    element,
+            //    new XText(Environment.NewLine));
+
+            //lines = lines.Append("", Instances.XElementOperator.To_Text_NoModifications(element));
+
+            //// Only remove text nodes that are whitespace.
+            //element = Instances.XElementOperator.Clone(originalElement);
+
+            //textNodes = Instances.XElementOperator.Get_DescendantNodesOfType<XText>(element);
+
+            //foreach (var textNode in textNodes)
+            //{
+            //    var isWhitespaceOnly = Instances.XTextOperator.Is_WhitespaceOnly(textNode);
+            //    if(isWhitespaceOnly)
+            //    {
+            //        textNode.Remove();
+            //    }
+            //}
+
+            //lines = lines.Append("", Instances.XElementOperator.To_Text_NoModifications(element));
+
+            // Write out the results.
+            Instances.FileOperator.Write_Lines_Synchronous(
+                outputFilePath,
+                lines);
+
+            Instances.NotepadPlusPlusOperator.Open(outputFilePath);
+        }
+
+        /// <summary>
+        /// Given misformatted XML text, parse the text to an XElement, then get a string representation.
+        /// Ensure the round-tripped XML texts are the same.
+        /// </summary>
+        public void RoundTripMisformattedXmlText()
+        {
+            /// Inputs.
+            var misformattedXmlText = Instances.XmlTexts.MemberWithSummaryAndRemarks_Misformatted;
+
+
+            /// Run.
+            var xElement = Instances.XElementOperator.Parse(
+                misformattedXmlText,
+                // Ensure we preserve all the misformatted whitespace.
+                LoadOptions.PreserveWhitespace);
+
+            //// True, this is equal.
+            //var roundTrippedMisformattedXmlText = xElement.ToString();
+
+            // True, this is equal.
+            var roundTrippedMisformattedXmlText = Instances.XElementOperator.To_Text(xElement);
+
+            var areEqual = misformattedXmlText.Value == roundTrippedMisformattedXmlText;
+
+            Console.WriteLine($"{areEqual}: Equal?\n\n{misformattedXmlText}\n\n=>\n\n{roundTrippedMisformattedXmlText}");
         }
     }
 }

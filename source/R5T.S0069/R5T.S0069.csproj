@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net6.0</TargetFramework>
@@ -18,5 +18,6 @@
     <ProjectReference Include="..\..\..\R5T.T0203\source\R5T.T0203\R5T.T0203.csproj" />
     <ProjectReference Include="..\..\..\R5T.Z0049\source\R5T.Z0049\R5T.Z0049.csproj" />
     <ProjectReference Include="..\..\..\R5T.T0141\source\R5T.T0141\R5T.T0141.csproj" />
+    <ProjectReference Include="..\..\..\R5T.L0055\source\R5T.L0055\R5T.L0055.csproj" />
   </ItemGroup>
 </Project>

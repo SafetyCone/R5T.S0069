@@ -13,8 +13,12 @@ namespace R5T.S0069
             //XmlScripts.Instance.Construct_ComplexElement();
             //XmlScripts.Instance.OrderChildrenBySpecifiedNames();
 
-            Demonstrations.Instance.XElement_Equalities();
+            //Demonstrations.Instance.XElement_Equalities();
 
+            XPathDemonstrations.Instance.Test_XPathExpression();
+
+            //Experiments.Instance.RoundTripMisformattedXmlText();
+            //Experiments.Instance.FormatMisformattedXmlText();
             //Experiments.Instance.XmlWriterSettingsAreEqual();
             //Experiments.Instance.XmlWriterSettingsAreEqualByValue();
             //Experiments.Instance.XmlWriterSettings_ToString();
