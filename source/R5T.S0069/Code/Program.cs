@@ -13,9 +13,15 @@ namespace R5T.S0069
             //XmlScripts.Instance.Construct_ComplexElement();
             //XmlScripts.Instance.OrderChildrenBySpecifiedNames();
 
+            //Demonstrations.Instance.Create_XElement();
+            //Demonstrations.Instance.Deserialize_XElement_AsIs();
+            //Demonstrations.Instance.Serialize_XElement_AsIs();
+            //Demonstrations.Instance.Remove_InsignificantWhitespace();
+            //Demonstrations.Instance.Serialize_Unadorned();
+            Demonstrations.Instance.Serialize_Indented_CustomImplementation();
             //Demonstrations.Instance.XElement_Equalities();
 
-            XPathDemonstrations.Instance.Test_XPathExpression();
+            //XPathDemonstrations.Instance.Test_XPathExpression();
 
             //Experiments.Instance.RoundTripMisformattedXmlText();
             //Experiments.Instance.FormatMisformattedXmlText();

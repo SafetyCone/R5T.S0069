@@ -256,7 +256,7 @@ namespace R5T.S0069
 
             //var originalElement = Instances.XElementOperator.Clone(element);
 
-            var lines = Instances.EnumerableOperator.From(Instances.XElementOperator.To_Text_NoModifications(element));
+            var lines = Instances.EnumerableOperator.From(Instances.XElementOperator.To_Text_AsIs(element));
 
             // Remove all whitespace-only child text nodes of the element.
             var whitespaceOnlyChildTextNodes = Instances.XElementOperator.Enumerate_ChildNodesOfType<XText>(element)
@@ -268,7 +268,7 @@ namespace R5T.S0069
                 textNode.Remove();
             }
 
-            lines = lines.Append("", Instances.XElementOperator.To_Text_NoModifications(element));
+            lines = lines.Append("", Instances.XElementOperator.To_Text_AsIs(element));
 
             // Assume XML documentation comment is composed of multiple top-level elements, with no indentation.
             var childElements = Instances.XElementOperator.Get_ChildElements(element);
@@ -277,7 +277,7 @@ namespace R5T.S0069
                 childElement.AddBeforeSelf(new XText(Environment.NewLine));
             }
 
-            lines = lines.Append("", Instances.XElementOperator.To_Text_NoModifications(element));
+            lines = lines.Append("", Instances.XElementOperator.To_Text_AsIs(element));
 
             // Every newline in every text node becomes a newline+tab.
             var textNodes = Instances.XElementOperator.Get_DescendantNodesOfType<XText>(element);
@@ -294,14 +294,14 @@ namespace R5T.S0069
                 textNode.Value = newTextNodeValue;
             }
 
-            lines = lines.Append("", Instances.XElementOperator.To_Text_NoModifications(element));
+            lines = lines.Append("", Instances.XElementOperator.To_Text_AsIs(element));
 
             // Put the member elment end tag on its own line.
             Instances.XElementOperator.Add_BeforeElementEndTag(
                 element,
                 new XText(Environment.NewLine));
 
-            lines = lines.Append("", Instances.XElementOperator.To_Text_NoModifications(element));
+            lines = lines.Append("", Instances.XElementOperator.To_Text_AsIs(element));
 
             //// Remove all text nodes.
             //var textNodes = Instances.XElementOperator.Get_DescendantNodesOfType<XText>(element);
